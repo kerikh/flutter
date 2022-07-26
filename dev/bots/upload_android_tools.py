@@ -42,13 +42,13 @@ def RunCommand(command, env=None):
 
 def VersionStampName(tools_name):
   if sys.platform.startswith('linux'):
-    return 'VERSION_LINUX_' + tools_name.upper()
+    return f'VERSION_LINUX_{tools_name.upper()}'
   elif sys.platform == 'darwin':
-    return 'VERSION_MACOSX_' + tools_name.upper()
+    return f'VERSION_MACOSX_{tools_name.upper()}'
   elif sys.platform.startswith(('cygwin', 'win')):
-    return 'VERSION_WIN_' + tools_name.upper()
+    return f'VERSION_WIN_{tools_name.upper()}'
   else:
-    raise Exception('Unsupported platform: ' + sys.platform)
+    raise Exception(f'Unsupported platform: {sys.platform}')
 
 def CheckInstallDir(tools_name):
   """Check if the tools directory exists."""

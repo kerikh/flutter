@@ -43,13 +43,13 @@ def GetInstalledVersion(version_stamp):
 
 def VersionStampName(tools_name):
   if sys.platform.startswith('linux'):
-    return 'VERSION_LINUX_' + tools_name.upper()
+    return f'VERSION_LINUX_{tools_name.upper()}'
   elif sys.platform == 'darwin':
-    return 'VERSION_MACOSX_' + tools_name.upper()
+    return f'VERSION_MACOSX_{tools_name.upper()}'
   elif sys.platform.startswith(('cygwin', 'win')):
-    return 'VERSION_WIN_' + tools_name.upper()
+    return f'VERSION_WIN_{tools_name.upper()}'
   else:
-    raise Exception('Unsupported platform: ' + sys.platform)
+    raise Exception(f'Unsupported platform: {sys.platform}')
 
 def UpdateTools(tools_name):
   """Downloads zipped tools from Google Cloud Storage and extracts them,
@@ -76,15 +76,20 @@ def UpdateTools(tools_name):
     shutil.rmtree(tools_root)
 
   # Download tools from GCS.
-  archive_path = os.path.join(INSTALL_DIR, tools_name + '.tar.gz')
-  download_cmd = ['python', GSUTIL_PATH, 'cp',
-                  'gs://mojo/android/tool/%s.tar.gz' % version,
-                  archive_path]
+  archive_path = os.path.join(INSTALL_DIR, f'{tools_name}.tar.gz')
+  download_cmd = [
+      'python',
+      GSUTIL_PATH,
+      'cp',
+      f'gs://mojo/android/tool/{version}.tar.gz',
+      archive_path,
+  ]
   if not RunCommand(download_cmd):
     print ('WARNING: Failed to download Android tools.')
     return False
 
-  print "Extracting Android tools (" + tools_name + ")"
+  # Read latest version.
+  version_stamp = VersionStampName(tools_name)
   with tarfile.open(archive_path) as arch:
     arch.extractall(INSTALL_DIR)
   os.remove(archive_path)
